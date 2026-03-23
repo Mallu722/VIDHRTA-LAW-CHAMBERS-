@@ -42,9 +42,9 @@ const About = () => {
             <ScrollReveal direction="right">
               <div className="space-y-8">
                 <div className="relative rounded-lg overflow-hidden shadow-xl mb-8">
-                  <img 
-                    src="/images/law_chambers_meeting.png" 
-                    alt="Vidhrta Law Chambers Meeting Room" 
+                  <img
+                    src="/images/law_chambers_meeting.png"
+                    alt="Vidhrta Law Chambers Meeting Room"
                     className="w-full h-64 object-cover"
                   />
                   <div className="absolute inset-0 bg-primary/20 mix-blend-multiply" />

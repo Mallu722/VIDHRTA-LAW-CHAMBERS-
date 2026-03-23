@@ -33,9 +33,9 @@ const CourtPractice = () => {
     <div>
       <section className="relative bg-primary pt-32 pb-20 overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-20">
-          <img 
-            src="/images/hero_legal.png" 
-            alt="Law Chambers" 
+          <img
+            src="/images/hero_legal.png"
+            alt="Law Chambers"
             className="w-full h-full object-cover"
           />
         </div>

@@ -27,7 +27,7 @@ const Contact = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    
+
     // Simulate API delay
     setTimeout(() => {
       saveBooking(formData);
@@ -127,22 +127,22 @@ const Contact = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
                       <label className="text-xs tracking-wider uppercase text-muted-foreground font-medium mb-2 block">Full Name *</label>
-                      <Input 
+                      <Input
                         name="client"
-                        required 
-                        placeholder="Your full name" 
-                        className="bg-card" 
+                        required
+                        placeholder="Your full name"
+                        className="bg-card"
                         value={formData.client}
                         onChange={handleChange}
                       />
                     </div>
                     <div>
                       <label className="text-xs tracking-wider uppercase text-muted-foreground font-medium mb-2 block">Phone</label>
-                      <Input 
+                      <Input
                         name="phone"
-                        type="tel" 
-                        placeholder="+91 XXXXX XXXXX" 
-                        className="bg-card" 
+                        type="tel"
+                        placeholder="+91 XXXXX XXXXX"
+                        className="bg-card"
                         value={formData.phone}
                         onChange={handleChange}
                       />
@@ -150,34 +150,34 @@ const Contact = () => {
                   </div>
                   <div>
                     <label className="text-xs tracking-wider uppercase text-muted-foreground font-medium mb-2 block">Email *</label>
-                    <Input 
+                    <Input
                       name="email"
-                      required 
-                      type="email" 
-                      placeholder="your@email.com" 
-                      className="bg-card" 
+                      required
+                      type="email"
+                      placeholder="your@email.com"
+                      className="bg-card"
                       value={formData.email}
                       onChange={handleChange}
                     />
                   </div>
                   <div>
                     <label className="text-xs tracking-wider uppercase text-muted-foreground font-medium mb-2 block">Subject</label>
-                    <Input 
+                    <Input
                       name="subject"
-                      placeholder="Brief subject of your booking inquiry" 
-                      className="bg-card" 
+                      placeholder="Brief subject of your booking inquiry"
+                      className="bg-card"
                       value={formData.subject}
                       onChange={handleChange}
                     />
                   </div>
                   <div>
                     <label className="text-xs tracking-wider uppercase text-muted-foreground font-medium mb-2 block">Message *</label>
-                    <Textarea 
+                    <Textarea
                       name="message"
-                      required 
-                      rows={6} 
-                      placeholder="Describe your legal matter or inquiry..." 
-                      className="bg-card resize-none" 
+                      required
+                      rows={6}
+                      placeholder="Describe your legal matter or inquiry..."
+                      className="bg-card resize-none"
                       value={formData.message}
                       onChange={handleChange}
                     />
