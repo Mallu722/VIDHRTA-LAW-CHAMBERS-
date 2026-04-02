@@ -24,7 +24,7 @@ const areas = [
     title: "Constitutional Law",
     desc: "Our constitutional law practice addresses fundamental rights, government action, and public law matters at the highest levels.",
     matters: ["Writ petitions under Articles 226 & 32", "Fundamental rights enforcement", "Public interest litigation (PIL)", "Challenges to administrative orders", "Service & employment disputes", "Constitutional interpretation matters"],
-    image: "https://images.unsplash.com/photo-1589994965851-a8f479c573a9?auto=format&fit=crop&q=80&w=700",
+    image: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&q=80&w=700",
   },
   {
     icon: BookOpen,
