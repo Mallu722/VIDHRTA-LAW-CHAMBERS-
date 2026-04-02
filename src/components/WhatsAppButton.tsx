@@ -17,7 +17,7 @@ const WhatsAppButton = () => {
         return () => window.removeEventListener("scroll", toggleVisibility);
     }, []);
 
-    const whatsappNumber = "917829759202";
+    const whatsappNumber = "919986010124";
     const message = encodeURIComponent("Hello Vidhrta Law Chambers, I'd like to inquire about legal services.");
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
 
@@ -31,11 +31,6 @@ const WhatsAppButton = () => {
             }`}
             aria-label="Chat on WhatsApp"
         >
-            {/* Hover Tooltip/Label */}
-            <div className="bg-white text-primary px-4 py-2 rounded-full shadow-2xl border border-gold/20 text-xs font-bold tracking-widest uppercase opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 transition-all duration-300 pointer-events-none whitespace-nowrap">
-                Chat With Us
-            </div>
-
             {/* Pulsing Background */}
             <div className="absolute inset-0 bg-[#25D366] rounded-full animate-ping opacity-20 group-hover:scale-125 transition-transform duration-500"></div>
 
