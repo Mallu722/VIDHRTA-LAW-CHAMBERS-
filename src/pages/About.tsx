@@ -56,7 +56,7 @@ const About = () => {
                       <h3 className="text-primary-foreground font-heading text-xl font-semibold">Vision</h3>
                     </div>
                     <p className="text-primary-foreground/65 text-sm leading-relaxed">
-                      To be a leading litigation practice in Karnataka, recognized for the quality of our advocacy, the strength of our counsel, and the depth of our client relationships.
+                      To be a premier law chamber synonymous with legal excellence, fearless advocacy, and unwavering dedication to the rule of law.
                     </p>
                   </div>
                   <div>
@@ -65,7 +65,7 @@ const About = () => {
                       <h3 className="text-primary-foreground font-heading text-xl font-semibold">Mission</h3>
                     </div>
                     <p className="text-primary-foreground/65 text-sm leading-relaxed">
-                      To provide accessible, ethical, and results-driven legal services — combining rigorous preparation with bold advocacy to protect our clients' rights and advance their interests at every stage of proceedings.
+                      To deliver sophisticated legal solutions through rigorous preparation, sharp courtroom advocacy, and strategic insight, while maintaining the highest standards of integrity and professionalism in every matter we undertake.
                     </p>
                   </div>
                 </div>

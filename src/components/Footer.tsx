@@ -9,13 +9,11 @@ const Footer = () => {
           {/* Brand */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-sm bg-gold flex items-center justify-center">
-                <span className="text-primary font-heading text-lg font-bold">V</span>
-              </div>
-              <div className="leading-tight">
-                <span className="font-heading text-xl font-semibold block">Vidhrta</span>
-                <span className="text-[10px] tracking-[0.25em] uppercase text-primary-foreground/50">Law Chambers</span>
-              </div>
+              <img
+                src="/images/logo.png"
+                alt="Vidhrta Law Chambers"
+                className="h-20 w-auto object-contain mb-2"
+              />
             </div>
             <p className="text-primary-foreground/60 text-sm leading-relaxed">
               A Bengaluru-based litigation and advisory firm committed to precision, integrity, and legal excellence.
@@ -61,15 +59,21 @@ const Footer = () => {
             <ul className="space-y-4">
               <li className="flex gap-3 text-sm text-primary-foreground/60">
                 <MapPin className="w-4 h-4 text-gold shrink-0 mt-0.5" />
-                <span>No. 111 & 114, Embassy Centre, Race Course Road, Bengaluru – 560001</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=Embassy+Centre%2C+Race+Course+Road%2C+Bengaluru+560001" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">
+                  <span>No. 111 & 114, Embassy Centre, Race Course Road, Bengaluru – 560001</span>
+                </a>
               </li>
               <li className="flex gap-3 text-sm text-primary-foreground/60">
                 <Phone className="w-4 h-4 text-gold shrink-0" />
-                <span>+91 80 XXXX XXXX</span>
+                <a href="tel:+919986010124" className="hover:text-gold transition-colors">
+                  <span>+91 9986010124</span>
+                </a>
               </li>
               <li className="flex gap-3 text-sm text-primary-foreground/60">
                 <Mail className="w-4 h-4 text-gold shrink-0" />
-                <span>contact@vidhrtalaw.com</span>
+                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=huddarakshay@gmail.com" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">
+                  <span>huddarakshay@gmail.com</span>
+                </a>
               </li>
             </ul>
           </div>
@@ -84,9 +88,9 @@ const Footer = () => {
               Bengaluru, Karnataka, India
             </p>
           </div>
-          
-          <Link 
-            to="/dashboard" 
+
+          <Link
+            to="/dashboard"
             className="flex items-center gap-1.5 text-primary-foreground/20 hover:text-gold text-[10px] uppercase tracking-widest transition-colors duration-200 group"
           >
             <ShieldCheck className="w-3 h-3 opacity-50 group-hover:opacity-100" />

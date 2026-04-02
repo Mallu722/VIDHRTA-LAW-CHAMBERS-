@@ -13,6 +13,7 @@ import Team from "./pages/Team";
 import Contact from "./pages/Contact";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
+import DisclaimerModal from "./components/DisclaimerModal";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -32,6 +33,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <DisclaimerModal />
         <ScrollToTop />
         <Navbar />
         <main>

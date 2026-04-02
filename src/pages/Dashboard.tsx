@@ -22,7 +22,8 @@ import {
   X,
   FileText,
   Upload,
-  Link as LinkIcon
+  Link as LinkIcon,
+  LogOut
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -55,9 +56,103 @@ const Dashboard = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [uploadType, setUploadType] = useState<"photo" | "video" | "file">("file");
 
+  // Authentication state
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    return sessionStorage.getItem("vidhrta_admin_authenticated") === "true";
+  });
+  const [loginPassword, setLoginPassword] = useState("");
+  const [loginError, setLoginError] = useState(false);
+
   useEffect(() => {
-    setBookings(getBookings());
-  }, []);
+    if (isAuthenticated) {
+      setBookings(getBookings());
+    }
+  }, [isAuthenticated]);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (loginPassword === "vidh2024") {
+      setIsAuthenticated(true);
+      sessionStorage.setItem("vidhrta_admin_authenticated", "true");
+      setLoginError(false);
+      toast({
+        title: "Access Granted",
+        description: "Welcome back to the Admin Console.",
+      });
+    } else {
+      setLoginError(true);
+      toast({
+        variant: "destructive",
+        title: "Access Denied",
+        description: "Invalid administrator password.",
+      });
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    sessionStorage.removeItem("vidhrta_admin_authenticated");
+    toast({
+      title: "Logged Out",
+      description: "You have been securely logged out.",
+    });
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 bg-[url('https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center">
+        <div className="absolute inset-0 bg-primary/90 backdrop-blur-sm" />
+        <ScrollReveal>
+          <Card className="w-full max-w-md bg-white/95 backdrop-blur shadow-2xl border-none relative z-10 p-4">
+            <CardHeader className="text-center pb-8">
+              <div className="mx-auto w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mb-6 border border-gold/20">
+                <Users className="w-8 h-8 text-gold" />
+              </div>
+              <CardTitle className="text-3xl font-heading mb-2">Admin Console</CardTitle>
+              <CardDescription className="text-slate-500 font-medium tracking-wide border-t border-slate-100 pt-4 mt-4">
+                VIDHRTA LAW CHAMBERS
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleLogin} className="space-y-6">
+                <div className="space-y-3">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground pl-1">
+                    Security Key
+                  </label>
+                  <div className="relative">
+                    <Input 
+                      type="password" 
+                      placeholder="Enter administrator password" 
+                      className={`h-12 bg-slate-50 border-slate-200 focus:ring-gold focus:border-gold px-4 text-center tracking-widest ${loginError ? "border-red-500 bg-red-50" : ""}`}
+                      value={loginPassword}
+                      onChange={(e) => {
+                        setLoginPassword(e.target.value);
+                        setLoginError(false);
+                      }}
+                      autoFocus
+                    />
+                  </div>
+                  {loginError && (
+                    <p className="text-red-500 text-[10px] font-bold uppercase text-center mt-2 tracking-wider">
+                      Authentication Failed
+                    </p>
+                  )}
+                </div>
+                <Button type="submit" variant="gold" className="w-full h-12 text-sm uppercase tracking-widest font-bold shadow-lg shadow-gold/20">
+                  Access Dashboard
+                </Button>
+                <div className="text-center">
+                  <a href="mailto:huddarakshay@gmail.com" className="text-[10px] text-muted-foreground hover:text-gold transition-colors font-medium">
+                    Forgot Password? Contact Master Administrator
+                  </a>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </ScrollReveal>
+      </div>
+    );
+  }
 
   const handleUpdate = () => {
     if (selectedBooking) {
@@ -181,6 +276,9 @@ const Dashboard = () => {
                 </p>
               </div>
               <div className="flex gap-4">
+                <Button variant="outline" className="border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10" onClick={handleLogout}>
+                  <LogOut className="w-4 h-4 mr-2" /> Logout
+                </Button>
                 <Button variant="outline" className="border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10">
                   <Download className="w-4 h-4 mr-2" /> Export Report
                 </Button>

@@ -74,9 +74,11 @@ const Contact = () => {
                     <div>
                       <h4 className="font-heading text-lg font-semibold text-foreground mb-1">Address</h4>
                       <p className="text-muted-foreground text-sm leading-relaxed">
-                        No. 111 & 114, Embassy Centre<br />
-                        Race Course Road / Crescent Road<br />
-                        Bengaluru – 560001, Karnataka
+                        <a href="https://www.google.com/maps/search/?api=1&query=Embassy+Centre%2C+Race+Course+Road%2C+Bengaluru+560001" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">
+                          No. 111 & 114, Embassy Centre<br />
+                          Race Course Road / Crescent Road<br />
+                          Bengaluru – 560001, Karnataka
+                        </a>
                       </p>
                     </div>
                   </div>
@@ -84,14 +86,14 @@ const Contact = () => {
                     <Phone className="w-5 h-5 text-gold shrink-0" />
                     <div>
                       <h4 className="font-heading text-lg font-semibold text-foreground mb-1">Phone</h4>
-                      <p className="text-muted-foreground text-sm">+91 80 XXXX XXXX</p>
+                      <p className="text-muted-foreground text-sm"><a href="tel:+919986010124" className="hover:text-gold transition-colors">+91 9986010124</a></p>
                     </div>
                   </div>
                   <div className="flex gap-4">
                     <Mail className="w-5 h-5 text-gold shrink-0" />
                     <div>
                       <h4 className="font-heading text-lg font-semibold text-foreground mb-1">Email</h4>
-                      <p className="text-muted-foreground text-sm">contact@vidhrtalaw.com</p>
+                      <p className="text-muted-foreground text-sm"><a href="https://mail.google.com/mail/?view=cm&fs=1&to=huddarakshay@gmail.com" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">huddarakshay@gmail.com</a></p>
                     </div>
                   </div>
                   <div className="flex gap-4">
@@ -104,9 +106,9 @@ const Contact = () => {
                 </div>
 
                 {/* Map */}
-                <div className="rounded overflow-hidden border border-border">
+                <div className="rounded overflow-hidden border border-border mt-8">
                   <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.8!2d77.585!3d12.985!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTLCsDU5JzA2LjAiTiA3N8KwMzUnMDYuMCJF!5e0!3m2!1sen!2sin!4v1600000000000"
+                    src="https://maps.google.com/maps?q=Embassy+Centre,+Race+Course+Road,+Bengaluru&t=&z=15&ie=UTF8&iwloc=&output=embed"
                     width="100%"
                     height="250"
                     style={{ border: 0 }}

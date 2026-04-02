@@ -5,8 +5,9 @@ const partners = [
   {
     name: "Akshay R Huddar",
     role: "Partner",
-    focus: "Civil Litigation, Constitutional Law",
-    bio: "Akshay brings sharp analytical thinking and persuasive advocacy to the firm's civil and constitutional practice. With experience spanning the High Court of Karnataka and district courts, he is known for his meticulous preparation and strategic approach to complex disputes.",
+    focus: "Civil, Criminal, Constitutional Law",
+    bio: "Litigation-focused advocate known for his commanding presence and strategic handling of complex disputes. With regular appearances before the High Court of Karnataka and subordinate courts, Akshay combines rigorous legal analysis with precise, persuasive advocacy in high-value property disputes and criminal defense.",
+    image: "/images/akshay.jpg"
   },
   {
     name: "Abhishek R Huddar",
@@ -54,19 +55,29 @@ const Team = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {partners.map((p, i) => (
               <ScrollReveal key={p.name} delay={i * 100}>
-                <div className="bg-card rounded border border-border overflow-hidden h-full flex flex-col">
-                  <div className="bg-primary p-8 flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-full bg-navy-light flex items-center justify-center shrink-0">
-                      <span className="text-gold font-heading text-2xl font-semibold">
-                        {p.name.split(" ").map(n => n[0]).join("")}
-                      </span>
-                    </div>
+                <div className="bg-card rounded border border-border overflow-hidden h-full flex flex-col relative transition-all duration-300 hover:border-gold/50 hover:shadow-xl">
+                  
+                  {/* Top Bar with Avatar and Name */}
+                  <div className="bg-primary p-8 flex items-center gap-4 relative z-10 transition-all duration-500">
+                    {p.image ? (
+                        <div className="w-16 h-16 rounded-full border border-gold/30 shrink-0 overflow-hidden bg-black">
+                            <img src={p.image} alt={p.name} className="w-full h-full object-cover object-center" />
+                        </div>
+                    ) : (
+                        <div className="w-16 h-16 rounded-full bg-navy-light flex items-center justify-center shrink-0">
+                        <span className="text-gold font-heading text-2xl font-semibold">
+                            {p.name.split(" ").map(n => n[0]).join("")}
+                        </span>
+                        </div>
+                    )}
                     <div>
                       <h3 className="text-primary-foreground font-heading text-xl font-semibold">{p.name}</h3>
                       <span className="text-gold text-xs tracking-widest uppercase">{p.role}</span>
                     </div>
                   </div>
-                  <div className="p-8 flex-1">
+                  
+                  {/* Bio Container */}
+                  <div className="p-8 flex-1 relative z-10 bg-card">
                     <span className="text-xs tracking-wider uppercase text-gold-dark font-semibold block mb-3">{p.focus}</span>
                     <p className="text-muted-foreground text-sm leading-relaxed">{p.bio}</p>
                   </div>

@@ -24,7 +24,7 @@ const areas = [
     title: "Constitutional Law",
     desc: "Our constitutional law practice addresses fundamental rights, government action, and public law matters at the highest levels.",
     matters: ["Writ petitions under Articles 226 & 32", "Fundamental rights enforcement", "Public interest litigation (PIL)", "Challenges to administrative orders", "Service & employment disputes", "Constitutional interpretation matters"],
-    image: "https://images.unsplash.com/photo-1517417051851-36a6e0bf39b3?auto=format&fit=crop&q=80&w=700",
+    image: "https://images.unsplash.com/photo-1589994965851-a8f479c573a9?auto=format&fit=crop&q=80&w=700",
   },
   {
     icon: BookOpen,
@@ -45,7 +45,7 @@ const areas = [
     title: "Family & Matrimonial Disputes",
     desc: "We handle sensitive family matters with discretion, empathy, and a firm commitment to achieving fair outcomes.",
     matters: ["Divorce & judicial separation", "Child custody & visitation rights", "Maintenance & alimony claims", "Domestic violence proceedings", "Adoption & guardianship", "Property division & settlement"],
-    image: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&q=80&w=700",
+    image: "/images/family_matrimonial.png",
   },
 ];
 
@@ -85,9 +85,9 @@ const PracticeAreas = () => {
                     <img
                       src={area.image}
                       alt={area.title}
-                      className="w-full h-72 lg:h-80 object-cover transition-transform duration-700 group-hover:scale-105"
+                      className="w-full h-72 lg:h-80 object-cover object-center transition-transform duration-[1.5s] group-hover:scale-[1.03]"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent opacity-90 group-hover:opacity-40 transition-opacity duration-700" />
                     {/* Icon badge */}
                     <div className="absolute top-5 left-5">
                       <div className="bg-primary/90 backdrop-blur-sm border border-gold/20 rounded-xl p-3 shadow-lg">
