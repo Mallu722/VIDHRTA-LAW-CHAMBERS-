@@ -79,49 +79,49 @@ const PracticeAreas = () => {
           <div className="space-y-24">
             {areas.map((area, i) => (
               <ScrollReveal key={area.title} delay={0}>
-                <div className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${i % 2 !== 0 ? "lg:flex-row-reverse" : ""}`}>
+                <div className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center ${i % 2 !== 0 ? "lg:flex-row-reverse" : ""}`}>
                   {/* Image side */}
                   <div className={`relative rounded-2xl overflow-hidden shadow-2xl group ${i % 2 !== 0 ? "lg:order-2" : ""}`}>
                     <img
                       src={area.image}
                       alt={area.title}
-                      className="w-full h-72 lg:h-80 object-cover object-center transition-transform duration-[1.5s] group-hover:scale-[1.03]"
+                      className="w-full h-64 sm:h-72 lg:h-80 object-cover object-center transition-transform duration-[1.5s] group-hover:scale-[1.03]"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent opacity-90 group-hover:opacity-40 transition-opacity duration-700" />
                     {/* Icon badge */}
-                    <div className="absolute top-5 left-5">
-                      <div className="bg-primary/90 backdrop-blur-sm border border-gold/20 rounded-xl p-3 shadow-lg">
-                        <area.icon className="w-6 h-6 text-gold" />
+                    <div className="absolute top-4 left-4 sm:top-5 sm:left-5">
+                      <div className="bg-primary/90 backdrop-blur-sm border border-gold/20 rounded-xl p-2.5 sm:p-3 shadow-lg">
+                        <area.icon className="w-5 h-5 sm:w-6 sm:h-6 text-gold" />
                       </div>
                     </div>
                     {/* Title on image */}
-                    <div className="absolute bottom-5 left-5">
-                      <span className="text-white font-heading text-lg font-semibold">{area.title}</span>
+                    <div className="absolute bottom-4 left-4 sm:bottom-5 sm:left-5">
+                      <span className="text-white font-heading text-base sm:text-lg font-semibold">{area.title}</span>
                     </div>
                   </div>
 
                   {/* Text side */}
                   <div className={`${i % 2 !== 0 ? "lg:order-1" : ""}`}>
                     <span className="text-gold text-[10px] tracking-[0.4em] uppercase font-bold mb-3 block">Practice Area {String(i + 1).padStart(2, "0")}</span>
-                    <h2 className="text-3xl md:text-4xl font-heading font-semibold text-foreground mb-4">{area.title}</h2>
-                    <p className="text-muted-foreground leading-relaxed mb-7">{area.desc}</p>
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-semibold text-foreground mb-4">{area.title}</h2>
+                    <p className="text-muted-foreground text-sm sm:text-base leading-relaxed mb-6 sm:mb-7">{area.desc}</p>
                     <h4 className="text-[10px] tracking-[0.35em] uppercase font-bold text-gold mb-4">Matters We Handle</h4>
-                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-7">
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 mb-7">
                       {area.matters.map((matter) => (
-                        <li key={matter} className="flex items-start gap-3 text-sm text-muted-foreground">
-                          <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0 mt-2" />
+                        <li key={matter} className="flex items-start gap-3 text-xs sm:text-sm text-muted-foreground">
+                          <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0 mt-1.5" />
                           {matter}
                         </li>
                       ))}
                     </ul>
                     <Link to="/contact">
-                      <Button variant="outline" size="sm" className="tracking-widest uppercase text-xs font-bold">
+                      <Button variant="outline" size="sm" className="w-full sm:w-auto tracking-widest uppercase text-[10px] sm:text-xs font-bold">
                         Enquire About This Area <ArrowRight className="w-3 h-3 ml-2" />
                       </Button>
                     </Link>
                   </div>
                 </div>
-                {i !== areas.length - 1 && <div className="mt-24 border-t border-border" />}
+                {i !== areas.length - 1 && <div className="mt-16 sm:mt-24 border-t border-border" />}
               </ScrollReveal>
             ))}
           </div>

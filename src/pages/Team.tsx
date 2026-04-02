@@ -55,10 +55,10 @@ const Team = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {partners.map((p, i) => (
               <ScrollReveal key={p.name} delay={i * 100}>
-                <div className="bg-card rounded border border-border overflow-hidden h-full flex flex-col relative transition-all duration-300 hover:border-gold/50 hover:shadow-xl">
+                <div className="bg-card rounded border border-border overflow-hidden h-full flex flex-col relative transition-all duration-500 hover:-translate-y-2 hover:border-gold/60 hover:shadow-[0_20px_50px_rgba(197,165,114,0.15)] group">
                   
                   {/* Top Bar with Avatar and Name */}
-                  <div className="bg-primary p-8 flex items-center gap-4 relative z-10 transition-all duration-500">
+                  <div className="bg-primary p-8 flex items-center gap-4 relative z-10 transition-all duration-500 group-hover:bg-primary-dark">
                     {p.image ? (
                         <div className="w-16 h-16 rounded-full border border-gold/30 shrink-0 overflow-hidden bg-black">
                             <img src={p.image} alt={p.name} className="w-full h-full object-cover object-center" />
@@ -97,7 +97,7 @@ const Team = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {associates.map((a, i) => (
               <ScrollReveal key={a.name} delay={i * 60}>
-                <div className="bg-card rounded border border-border p-6 text-center hover:border-gold/30 hover:shadow-lg transition-all duration-300">
+                <div className="bg-card rounded border border-border p-6 text-center hover:border-gold/40 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
                   <div className="w-14 h-14 rounded-full bg-primary mx-auto mb-4 flex items-center justify-center">
                     <span className="text-gold font-heading text-lg font-semibold">
                       {a.name.split(" ").map(n => n[0]).join("")}

@@ -46,35 +46,35 @@ const Index = () => {
         <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-transparent via-gold to-transparent opacity-60 z-10" />
 
         {/* Content */}
-        <div className="container-wide section-padding relative z-10 w-full">
-          <div className="max-w-3xl">
+        <div className="container-wide section-padding relative z-10 w-full text-center md:text-left">
+          <div className="max-w-3xl mx-auto md:mx-0">
             <ScrollReveal delay={100}>
               <span className="text-gold text-[10px] tracking-[0.5em] uppercase font-bold mb-6 block opacity-90">
                 Bengaluru-Based Litigation & Advisory
               </span>
             </ScrollReveal>
             <ScrollReveal delay={250}>
-              <h1 className="text-primary-foreground mb-2 leading-[1.05] text-5xl md:text-6xl lg:text-7xl font-heading font-semibold">
+              <h1 className="text-primary-foreground mb-2 leading-[1.05] text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-heading font-semibold">
                 Precision in Law.
               </h1>
-              <h1 className="text-primary-foreground mb-8 leading-[1.05] text-5xl md:text-6xl lg:text-7xl font-heading font-semibold">
+              <h1 className="text-primary-foreground mb-8 leading-[1.05] text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-heading font-semibold">
                 <span className="text-gold italic">Strength</span> in Advocacy.
               </h1>
             </ScrollReveal>
             <ScrollReveal delay={400}>
-              <p className="text-primary-foreground/70 text-lg md:text-xl leading-relaxed max-w-xl mb-10 font-light">
+              <p className="text-primary-foreground/70 text-base md:text-xl leading-relaxed max-w-xl mb-10 font-light mx-auto md:mx-0">
                 Vidhrta Law Chambers delivers strategic counsel and vigorous representation across trial courts, tribunals, and the High Court of Karnataka.
               </p>
             </ScrollReveal>
             <ScrollReveal delay={550}>
-              <div className="flex flex-wrap gap-4 mb-16">
+              <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-16">
                 <Link to="/contact">
-                  <Button variant="hero" size="lg" className="px-8 py-4 text-sm tracking-widest uppercase font-bold">
+                  <Button variant="hero" size="sm" className="md:size-lg px-6 md:px-8 py-3 md:py-4 text-xs md:text-sm tracking-widest uppercase font-bold">
                     Book a Consultation
                   </Button>
                 </Link>
                 <Link to="/practice-areas">
-                  <Button variant="outline-light" size="lg" className="px-8 py-4 text-sm tracking-widest uppercase font-bold">
+                  <Button variant="outline-light" size="sm" className="md:size-lg px-6 md:px-8 py-3 md:py-4 text-xs md:text-sm tracking-widest uppercase font-bold">
                     Our Practice <ArrowRight className="w-3 h-3 ml-2" />
                   </Button>
                 </Link>
@@ -83,12 +83,12 @@ const Index = () => {
 
             {/* Trust badges */}
             <ScrollReveal delay={650}>
-              <div className="flex flex-wrap items-center gap-6 text-primary-foreground/40 text-[10px] uppercase tracking-widest font-bold">
-                <span className="flex items-center gap-2"><Shield className="w-3 h-3 text-gold" /> Confidential</span>
-                <span className="w-px h-4 bg-current opacity-20" />
-                <span className="flex items-center gap-2"><Scale className="w-3 h-3 text-gold" /> High Court Registered</span>
-                <span className="w-px h-4 bg-current opacity-20" />
-                <span className="flex items-center gap-2"><Gavel className="w-3 h-3 text-gold" /> 10+ Years Experience</span>
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 md:gap-6 text-primary-foreground/40 text-[9px] md:text-[10px] uppercase tracking-widest font-bold">
+                <span className="flex items-center gap-2 grayscale brightness-200 opacity-70"><Shield className="w-3 h-3 text-gold" /> Confidential</span>
+                <span className="hidden md:block w-px h-4 bg-current opacity-20" />
+                <span className="flex items-center gap-2 grayscale brightness-200 opacity-70"><Scale className="w-3 h-3 text-gold" /> High Court Registered</span>
+                <span className="hidden md:block w-px h-4 bg-current opacity-20" />
+                <span className="flex items-center gap-2 grayscale brightness-200 opacity-70"><Gavel className="w-3 h-3 text-gold" /> 10+ Years Experience</span>
               </div>
             </ScrollReveal>
           </div>
@@ -97,16 +97,16 @@ const Index = () => {
         {/* Stats bar — pinned to bottom */}
         <div className="absolute bottom-0 left-0 right-0 z-10 border-t border-primary-foreground/10 backdrop-blur-sm bg-primary/40">
           <ScrollReveal delay={700}>
-            <div className="container-wide section-padding py-6 grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="container-wide section-padding py-4 md:py-6 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
               {[
                 { value: "6+", label: "Practice Areas" },
-                { value: "12+", label: "Legal Professionals" },
+                { value: "12+", label: "Professionals" },
                 { value: "4", label: "Courts Covered" },
                 { value: "Bengaluru", label: "Headquarters" },
               ].map((stat) => (
                 <div key={stat.label} className="text-center md:text-left">
-                  <span className="text-gold font-heading text-2xl md:text-3xl font-semibold block">{stat.value}</span>
-                  <span className="text-primary-foreground/50 text-[10px] tracking-wider uppercase mt-0.5 block">{stat.label}</span>
+                  <span className="text-gold font-heading text-xl md:text-3xl font-semibold block">{stat.value}</span>
+                  <span className="text-primary-foreground/50 text-[9px] md:text-[10px] tracking-wider uppercase mt-0.5 block">{stat.label}</span>
                 </div>
               ))}
             </div>
