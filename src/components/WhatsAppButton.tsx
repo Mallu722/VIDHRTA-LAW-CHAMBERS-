@@ -31,6 +31,11 @@ const WhatsAppButton = () => {
             }`}
             aria-label="Chat on WhatsApp"
         >
+            {/* Simple Text Label (No Background Box) */}
+            <span className="text-white text-[10px] tracking-[0.3em] font-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none mr-2">
+                WhatsApp
+            </span>
+
             {/* Pulsing Background */}
             <div className="absolute inset-0 bg-[#25D366] rounded-full animate-ping opacity-20 group-hover:scale-125 transition-transform duration-500"></div>
 
