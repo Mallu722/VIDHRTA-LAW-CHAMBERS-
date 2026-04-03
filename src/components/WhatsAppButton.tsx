@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { MessageSquare } from "lucide-react";
 
 const WhatsAppButton = () => {
     const [isVisible, setIsVisible] = useState(false);
@@ -26,29 +25,27 @@ const WhatsAppButton = () => {
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className={`fixed bottom-8 right-8 z-[100] group flex items-center gap-3 transition-all duration-500 transform ${
+            className={`fixed bottom-20 right-6 z-[90] group transition-all duration-500 transform ${
                 isVisible ? "translate-y-0 opacity-100 scale-100" : "translate-y-16 opacity-0 scale-50"
             }`}
             aria-label="Chat on WhatsApp"
+            title="Chat with us on WhatsApp"
         >
-            {/* Simple Text Label (No Background Box) */}
-            <span className="text-white text-[10px] tracking-[0.3em] font-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none mr-2">
-                WhatsApp
-            </span>
-
-            {/* Pulsing Background */}
-            <div className="absolute inset-0 bg-[#25D366] rounded-full animate-ping opacity-20 group-hover:scale-125 transition-transform duration-500"></div>
+            {/* Pulsing ring */}
+            <span className="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-25 pointer-events-none" />
 
             {/* Main Button */}
-            <div className="relative bg-[#25D366] text-white p-4 rounded-full shadow-[0_10px_30px_rgba(37,211,102,0.4)] transition-all duration-300 group-hover:scale-110 group-active:scale-95 border-2 border-white/10 overflow-hidden">
+            <span className="relative flex items-center justify-center bg-[#25D366] text-white p-3 rounded-full shadow-[0_6px_20px_rgba(37,211,102,0.45)] transition-all duration-300 group-hover:scale-110 group-active:scale-95 border border-white/20">
+                {/* Official WhatsApp logo SVG */}
                 <svg
-                    viewBox="0 0 24 24"
-                    className="w-7 h-7 fill-current"
+                    viewBox="0 0 32 32"
+                    className="w-5 h-5 fill-white"
                     xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
                 >
-                    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.284l-.539 2.016 2.049-.575c1.011.603 1.956.962 3.239.962 3.181 0 5.767-2.587 5.768-5.766 0-3.181-2.587-5.767-5.768-5.767zm3.1 8.874l-.442-.224c-.755-.383-1.071-.462-1.341-.186l-.427.531c-.13.161-.264.183-.526.06-.264-.13-1.117-.412-2.128-1.314-.787-.702-1.317-1.568-1.472-1.832-.155-.264-.016-.407.116-.539.119-.119.264-.308.396-.462.132-.155.176-.264.264-.441.088-.176.044-.33-.022-.464-.066-.134-.582-1.401-.798-1.921-.21-.508-.431-.439-.582-.446-.151-.007-.323-.008-.495-.008-.172 0-.452.065-.688.32-.236.255-.902.881-.902 2.148 0 1.268.923 2.493 1.052 2.669.129.176 1.816 2.774 4.397 3.886.614.264 1.092.422 1.464.539.617.195 1.178.168 1.621.102.495-.074 1.523-.623 1.739-1.229.215-.606.215-1.125.151-1.229zM12.033 4a10.026 10.026 0 0 1 10.02 10.02c.001 2.399-.861 4.708-2.428 6.5l-1.571-5.753.003-.01a7.7 7.7 0 0 0 1.776-4.737c0-4.282-3.484-7.766-7.766-7.766-4.282 0-7.766 3.484-7.766 7.766 0 1.558.468 3.012 1.272 4.225l-1.637 6.115 6.309-1.656A10.032 10.032 0 0 1 12.033 4z" />
+                    <path d="M16.003 2C8.28 2 2 8.28 2 16.003c0 2.47.648 4.786 1.777 6.795L2 30l7.395-1.742A13.94 13.94 0 0 0 16.003 30C23.72 30 30 23.72 30 16.003 30 8.28 23.72 2 16.003 2zm0 25.452a11.6 11.6 0 0 1-5.911-1.613l-.424-.252-4.39 1.034 1.062-4.282-.276-.44A11.6 11.6 0 0 1 4.4 16.003c0-6.398 5.206-11.603 11.603-11.603 6.398 0 11.603 5.205 11.603 11.603 0 6.397-5.205 11.449-11.603 11.449zm6.37-8.668c-.35-.174-2.07-1.02-2.39-1.137-.322-.116-.556-.174-.79.174-.233.348-.903 1.137-1.107 1.37-.203.232-.407.261-.756.087-.35-.174-1.475-.544-2.81-1.732-1.038-.926-1.739-2.07-1.942-2.42-.204-.349-.022-.537.153-.71.157-.155.35-.406.524-.609.174-.204.232-.35.349-.582.116-.232.058-.436-.03-.61-.087-.174-.79-1.9-1.08-2.601-.285-.685-.575-.593-.79-.604l-.672-.012c-.233 0-.61.087-.93.436-.32.348-1.22 1.194-1.22 2.912 0 1.718 1.25 3.378 1.424 3.61.174.232 2.461 3.76 5.964 5.27.834.36 1.485.575 1.992.737.837.267 1.6.23 2.202.14.671-.1 2.07-.847 2.361-1.664.29-.816.29-1.516.203-1.663-.086-.146-.32-.232-.67-.407z" />
                 </svg>
-            </div>
+            </span>
         </a>
     );
 };
