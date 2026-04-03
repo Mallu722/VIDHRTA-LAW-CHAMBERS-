@@ -1,19 +1,20 @@
 import { useState, useEffect } from "react";
 
-const DISCLAIMER_KEY = "vidhrta_disclaimer_agreed";
+const DISCLAIMER_KEY = "vidhrta_disclaimer_shown";
 
 const DisclaimerModal = () => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const agreed = localStorage.getItem(DISCLAIMER_KEY);
-    if (!agreed) {
+    const alreadyShown = sessionStorage.getItem(DISCLAIMER_KEY);
+    if (!alreadyShown) {
+      // Mark as shown immediately so reload won't show it again
+      sessionStorage.setItem(DISCLAIMER_KEY, "true");
       setVisible(true);
     }
   }, []);
 
   const handleAgree = () => {
-    localStorage.setItem(DISCLAIMER_KEY, "true");
     setVisible(false);
   };
 
@@ -31,6 +32,7 @@ const DisclaimerModal = () => {
         backgroundColor: "rgba(0, 0, 0, 0.72)",
         backdropFilter: "blur(4px)",
         padding: "1rem",
+        boxSizing: "border-box",
       }}
     >
       <div
@@ -39,22 +41,25 @@ const DisclaimerModal = () => {
           maxWidth: "680px",
           width: "100%",
           borderRadius: "4px",
-          padding: "2.5rem 2.5rem 2rem",
+          padding: "clamp(1.1rem, 5vw, 2.5rem) clamp(1rem, 5vw, 2.5rem) clamp(1rem, 4vw, 2rem)",
           boxShadow: "0 25px 60px rgba(0,0,0,0.4)",
           fontFamily: "'Georgia', serif",
           position: "relative",
+          maxHeight: "90dvh",
+          overflowY: "auto",
+          boxSizing: "border-box",
         }}
       >
         {/* Header */}
         <h2
           style={{
             textAlign: "center",
-            fontSize: "1.25rem",
+            fontSize: "clamp(1rem, 4vw, 1.25rem)",
             fontWeight: "700",
             letterSpacing: "0.15em",
             textTransform: "uppercase",
             color: "#1a1a1a",
-            marginBottom: "1.5rem",
+            marginBottom: "1.25rem",
             fontFamily: "'Georgia', serif",
           }}
         >
@@ -62,12 +67,12 @@ const DisclaimerModal = () => {
         </h2>
 
         {/* Divider */}
-        <hr style={{ borderColor: "#c9b99a", marginBottom: "1.5rem" }} />
+        <hr style={{ borderColor: "#c9b99a", marginBottom: "1.25rem" }} />
 
         {/* Body Text */}
         <div
           style={{
-            fontSize: "0.875rem",
+            fontSize: "clamp(0.78rem, 3.2vw, 0.875rem)",
             lineHeight: "1.75",
             color: "#2a2a2a",
           }}
@@ -86,7 +91,7 @@ const DisclaimerModal = () => {
               margin: "0 0 1.25rem 0",
               display: "flex",
               flexDirection: "column",
-              gap: "0.6rem",
+              gap: "0.75rem",
             }}
           >
             <li style={{ paddingLeft: "0.75rem", borderLeft: "2px solid #8b7355" }}>
@@ -122,8 +127,8 @@ const DisclaimerModal = () => {
               backgroundColor: "#1e3a5f",
               color: "#ffffff",
               border: "none",
-              padding: "0.65rem 2.25rem",
-              fontSize: "0.8rem",
+              padding: "0.7rem 2.25rem",
+              fontSize: "clamp(0.75rem, 3vw, 0.8rem)",
               fontWeight: "700",
               letterSpacing: "0.12em",
               textTransform: "uppercase",
@@ -131,6 +136,8 @@ const DisclaimerModal = () => {
               borderRadius: "2px",
               transition: "background-color 0.2s ease",
               fontFamily: "'Georgia', serif",
+              width: "min(100%, 200px)",
+              minHeight: "44px",
             }}
             onMouseEnter={(e) =>
               ((e.target as HTMLButtonElement).style.backgroundColor = "#2c5282")
