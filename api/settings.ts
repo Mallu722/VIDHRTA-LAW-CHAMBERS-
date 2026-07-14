@@ -21,7 +21,7 @@ export default async function handler(req: any, res: any) {
   // CORS Headers
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
   res.setHeader(
     'Access-Control-Allow-Headers',
     'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
@@ -35,41 +35,25 @@ export default async function handler(req: any, res: any) {
   try {
     const mongoClient = await getClient();
     const db = mongoClient.db();
-    const collection = db.collection('bookings');
+    const collection = db.collection('settings');
 
     if (req.method === 'GET') {
-      const bookings = await collection.find({}).toArray();
-      // Remove MongoDB _id if present to keep Frontend types clean
-      const cleanedBookings = bookings.map(({ _id, ...rest }) => rest);
-      return res.status(200).json(cleanedBookings);
+      const settings = await collection.findOne({ id: 'admin_settings' });
+      const password = settings?.adminPassword || 'vidh2024';
+      return res.status(200).json({ adminPassword: password });
     }
 
     if (req.method === 'POST') {
-      const bookings = req.body;
-      if (!Array.isArray(bookings)) {
-        return res.status(400).json({ error: 'Body must be an array of bookings' });
+      const { adminPassword } = req.body;
+      if (!adminPassword || typeof adminPassword !== 'string' || adminPassword.trim() === '') {
+        return res.status(400).json({ error: 'Invalid password' });
       }
 
-      // Upsert each booking individually by its unique id
-      for (const booking of bookings) {
-        if (booking && booking.id) {
-          const { _id, ...cleanBooking } = booking;
-          await collection.updateOne(
-            { id: booking.id },
-            { $set: cleanBooking },
-            { upsert: true }
-          );
-        }
-      }
-      return res.status(200).json({ success: true });
-    }
-
-    if (req.method === 'DELETE') {
-      const { id } = req.query;
-      if (!id) {
-        return res.status(400).json({ error: 'Missing booking id' });
-      }
-      await collection.deleteOne({ id });
+      await collection.updateOne(
+        { id: 'admin_settings' },
+        { $set: { adminPassword: adminPassword.trim() } },
+        { upsert: true }
+      );
       return res.status(200).json({ success: true });
     }
 

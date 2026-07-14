@@ -215,3 +215,60 @@ export const updateBooking = (id: string, updates: Partial<Booking>) => {
   
   return updatedBookings.find(b => b.id === id);
 };
+
+export const getAdminPassword = (): string => {
+  return localStorage.getItem("vidhrta_admin_password") || "vidh2024";
+};
+
+export const saveAdminPassword = (password: string) => {
+  localStorage.setItem("vidhrta_admin_password", password);
+};
+
+export const getAdminPasswordCloud = async (): Promise<string> => {
+  try {
+    const response = await fetch("/api/settings");
+    if (response.ok) {
+      const data = await response.json();
+      if (data.adminPassword) {
+        saveAdminPassword(data.adminPassword);
+        return data.adminPassword;
+      }
+    }
+  } catch (e) {
+    console.error("Failed to fetch admin password from cloud:", e);
+  }
+  return getAdminPassword();
+};
+
+export const saveAdminPasswordCloud = async (password: string): Promise<boolean> => {
+  try {
+    saveAdminPassword(password);
+    const response = await fetch("/api/settings", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ adminPassword: password })
+    });
+    return response.ok;
+  } catch (e) {
+    console.error("Failed to save admin password to cloud:", e);
+    return false;
+  }
+};
+
+export const deleteBookingCloud = async (id: string): Promise<boolean> => {
+  try {
+    const bookings = getBookings();
+    const updated = bookings.filter((b) => b.id !== id);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+
+    const response = await fetch(`/api/bookings?id=${id}`, {
+      method: "DELETE"
+    });
+    return response.ok;
+  } catch (e) {
+    console.error("Failed to delete booking from cloud:", e);
+    return false;
+  }
+};

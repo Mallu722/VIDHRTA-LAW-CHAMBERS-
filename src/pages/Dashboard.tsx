@@ -46,7 +46,7 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { getBookings, updateBooking, Booking, CaseMedia, CaseReview, ASSOCIATES, CaseHistoryItem, getBookingsCloud, saveBookingsCloud } from "@/lib/storage";
+import { getBookings, updateBooking, Booking, CaseMedia, CaseReview, ASSOCIATES, CaseHistoryItem, getBookingsCloud, saveBookingsCloud, getAdminPassword, getAdminPasswordCloud, saveAdminPasswordCloud, deleteBookingCloud } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
@@ -65,6 +65,13 @@ const Dashboard = () => {
   });
   const [loginPassword, setLoginPassword] = useState("");
   const [loginError, setLoginError] = useState(false);
+
+  // Password management states
+  const [adminPassword, setAdminPassword] = useState(() => getAdminPassword());
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const [currentPasswordInput, setCurrentPasswordInput] = useState("");
+  const [newPasswordInput, setNewPasswordInput] = useState("");
+  const [confirmPasswordInput, setConfirmPasswordInput] = useState("");
 
   // e-Court tracking state
   const [newAction, setNewAction] = useState("");
@@ -223,11 +230,17 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    // Load local cache immediately for instant response
     if (isAuthenticated) {
-      // Load local cache immediately for instant response
       setBookings(getBookings());
+    }
 
-      // Fetch cloud data and sync background
+    // Sync bookings and admin password from cloud on mount
+    getAdminPasswordCloud().then((p) => {
+      setAdminPassword(p);
+    }).catch(console.error);
+
+    if (isAuthenticated) {
       getBookingsCloud().then((cloudData) => {
         if (cloudData) {
           setBookings(cloudData);
@@ -238,7 +251,7 @@ const Dashboard = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (loginPassword === "vidh2024") {
+    if (loginPassword === adminPassword) {
       setIsAuthenticated(true);
       sessionStorage.setItem("vidhrta_admin_authenticated", "true");
       setLoginError(false);
@@ -263,6 +276,89 @@ const Dashboard = () => {
       title: "Logged Out",
       description: "You have been securely logged out.",
     });
+  };
+
+  const handleChangePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (currentPasswordInput !== adminPassword) {
+      toast({
+        variant: "destructive",
+        title: "Incorrect Password",
+        description: "The current password you entered is incorrect.",
+      });
+      return;
+    }
+    if (newPasswordInput !== confirmPasswordInput) {
+      toast({
+        variant: "destructive",
+        title: "Passwords Do Not Match",
+        description: "New password and confirmation password do not match.",
+      });
+      return;
+    }
+    if (newPasswordInput.length < 4) {
+      toast({
+        variant: "destructive",
+        title: "Password Too Short",
+        description: "Password must be at least 4 characters long.",
+      });
+      return;
+    }
+
+    saveAdminPasswordCloud(newPasswordInput).then((success) => {
+      if (success) {
+        setAdminPassword(newPasswordInput);
+        setIsChangePasswordOpen(false);
+        setCurrentPasswordInput("");
+        setNewPasswordInput("");
+        setConfirmPasswordInput("");
+        toast({
+          title: "Password Updated",
+          description: "Admin password has been updated across all devices successfully.",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Update Failed",
+          description: "Failed to update password in the cloud database.",
+        });
+      }
+    }).catch((err) => {
+      console.error(err);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "An unexpected error occurred while updating the password.",
+      });
+    });
+  };
+
+  const handleDeleteCase = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent opening case detail view
+    if (window.confirm("Are you sure you want to permanently delete this case?")) {
+      deleteBookingCloud(id).then((success) => {
+        if (success) {
+          setBookings((prev) => prev.filter((b) => b.id !== id));
+          toast({
+            title: "Case Deleted",
+            description: "The case has been permanently deleted from all devices.",
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Deletion Failed",
+            description: "Failed to delete the case from the database.",
+          });
+        }
+      }).catch((err) => {
+        console.error(err);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "An unexpected error occurred.",
+        });
+      });
+    }
   };
 
   if (!isAuthenticated) {
@@ -443,6 +539,9 @@ const Dashboard = () => {
                 </p>
               </div>
               <div className="flex gap-4">
+                <Button variant="ghost" className="border border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground bg-transparent" onClick={() => setIsChangePasswordOpen(true)}>
+                  Change Password
+                </Button>
                 <Button variant="ghost" className="border border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground bg-transparent" onClick={handleLogout}>
                   <LogOut className="w-4 h-4 mr-2" /> Logout
                 </Button>
@@ -550,9 +649,19 @@ const Dashboard = () => {
                               </span>
                             </td>
                             <td className="py-4 text-right">
-                              <Button variant="ghost" size="sm" className="h-8 px-2 text-gold hover:text-gold hover:bg-gold/10">
-                                Manage Hub <ExternalLink className="w-3 h-3 ml-1.5" />
-                              </Button>
+                              <div className="flex gap-2 justify-end">
+                                <Button variant="ghost" size="sm" className="h-8 px-2 text-gold hover:text-gold hover:bg-gold/10">
+                                  Manage Hub <ExternalLink className="w-3 h-3 ml-1.5" />
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-8 w-8 text-rose-500 hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-100"
+                                  onClick={(e) => handleDeleteCase(booking.id, e)}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
                             </td>
                           </tr>
                         ))}
@@ -1139,6 +1248,65 @@ const Dashboard = () => {
               </Button>
               <Button type="submit" variant="gold">
                 Create Case File
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Change Password Modal */}
+      <Dialog open={isChangePasswordOpen} onOpenChange={setIsChangePasswordOpen}>
+        <DialogContent className="max-w-md bg-white p-8">
+          <DialogHeader className="mb-4">
+            <DialogTitle className="text-2xl font-heading text-slate-900">Change Admin Password</DialogTitle>
+            <DialogDescription className="text-slate-500">
+              Update the security key used to access the administrator console across all devices.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleChangePasswordSubmit} className="space-y-4">
+            <div>
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 block">Current Password *</label>
+              <Input 
+                required
+                type="password"
+                placeholder="Enter current password"
+                value={currentPasswordInput}
+                onChange={(e) => setCurrentPasswordInput(e.target.value)}
+                className="bg-slate-50 border-slate-200"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 block">New Password *</label>
+              <Input 
+                required
+                type="password"
+                placeholder="Enter new password"
+                value={newPasswordInput}
+                onChange={(e) => setNewPasswordInput(e.target.value)}
+                className="bg-slate-50 border-slate-200"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 block">Confirm New Password *</label>
+              <Input 
+                required
+                type="password"
+                placeholder="Confirm new password"
+                value={confirmPasswordInput}
+                onChange={(e) => setConfirmPasswordInput(e.target.value)}
+                className="bg-slate-50 border-slate-200"
+              />
+            </div>
+
+            <div className="flex justify-end gap-3 border-t border-slate-100 pt-4 mt-6">
+              <Button type="button" variant="outline" onClick={() => setIsChangePasswordOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="gold">
+                Update Password
               </Button>
             </div>
           </form>
