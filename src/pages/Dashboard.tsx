@@ -46,7 +46,7 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { getBookings, updateBooking, Booking, CaseMedia, CaseReview, ASSOCIATES, CaseHistoryItem, getBookingsCloud, saveBookingsCloud, getAdminPassword, getAdminPasswordCloud, saveAdminPasswordCloud, deleteBookingCloud } from "@/lib/storage";
+import { getBookings, updateBooking, Booking, CaseMedia, CaseReview, ASSOCIATES, CaseHistoryItem, getBookingsCloud, saveBookingsCloud, getAdminPassword, getAdminPasswordCloud, saveAdminPasswordCloud, deleteBookingCloud, saveSingleBookingCloud } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
@@ -208,7 +208,7 @@ const Dashboard = () => {
     setBookings(updated);
 
     // Sync to cloud database
-    saveBookingsCloud(updated).catch(console.error);
+    saveSingleBookingCloud(newBooking).catch(console.error);
 
     // Reset fields
     setNewClient("");
@@ -230,23 +230,31 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    // Load local cache immediately for instant response
-    if (isAuthenticated) {
-      setBookings(getBookings());
-    }
-
-    // Sync bookings and admin password from cloud on mount
+    // Sync admin password from cloud on mount
     getAdminPasswordCloud().then((p) => {
       setAdminPassword(p);
     }).catch(console.error);
 
-    if (isAuthenticated) {
+    if (!isAuthenticated) return;
+
+    // Load local cache immediately for instant response
+    setBookings(getBookings());
+
+    // Fetch cloud data immediately
+    const fetchAndSync = () => {
       getBookingsCloud().then((cloudData) => {
         if (cloudData) {
           setBookings(cloudData);
         }
       }).catch(console.error);
-    }
+    };
+
+    fetchAndSync();
+
+    // Poll the cloud database every 10 seconds for real-time multi-device sync
+    const interval = setInterval(fetchAndSync, 10000);
+
+    return () => clearInterval(interval);
   }, [isAuthenticated]);
 
   const handleLogin = (e: React.FormEvent) => {

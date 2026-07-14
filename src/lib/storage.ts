@@ -169,8 +169,21 @@ export const saveBookingsCloud = async (bookings: Booking[]) => {
   }
 };
 
+export const saveSingleBookingCloud = async (booking: Booking) => {
+  try {
+    await fetch(CLOUD_URL, {
+      method: "POST",
+      body: JSON.stringify([booking]),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+  } catch (error) {
+    console.error("Failed to sync single booking to cloud:", error);
+  }
+};
+
 export const saveBooking = (bookingData: Omit<Booking, "id" | "date" | "status" | "createdAt">) => {
-  const bookings = getBookings();
   const newBooking: Booking = {
     ...bookingData,
     id: Math.random().toString(36).substr(2, 9),
@@ -194,11 +207,13 @@ export const saveBooking = (bookingData: Omit<Booking, "id" | "date" | "status" 
     ]
   };
   
-  const updatedBookings = [newBooking, ...bookings];
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedBookings));
+  const stored = localStorage.getItem(STORAGE_KEY);
+  let localList = stored ? JSON.parse(stored) : [];
+  localList = [newBooking, ...localList];
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(localList));
   
-  // Background cloud sync
-  saveBookingsCloud(updatedBookings).catch(console.error);
+  // Sync ONLY the single new booking to the cloud
+  saveSingleBookingCloud(newBooking).catch(console.error);
   
   return newBooking;
 };
@@ -210,10 +225,13 @@ export const updateBooking = (id: string, updates: Partial<Booking>) => {
   );
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedBookings));
   
-  // Background cloud sync
-  saveBookingsCloud(updatedBookings).catch(console.error);
+  // Sync ONLY the single updated booking to the cloud
+  const updatedBooking = updatedBookings.find(b => b.id === id);
+  if (updatedBooking) {
+    saveSingleBookingCloud(updatedBooking).catch(console.error);
+  }
   
-  return updatedBookings.find(b => b.id === id);
+  return updatedBooking;
 };
 
 export const getAdminPassword = (): string => {
