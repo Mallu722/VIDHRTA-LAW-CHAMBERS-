@@ -130,6 +130,45 @@ export const getBookings = (): Booking[] => {
   }
 };
 
+const CLOUD_URL = "https://kvdb.io/4NinsSNBKWC5w4qBCYTghs/bookings";
+
+export const getBookingsCloud = async (): Promise<Booking[]> => {
+  try {
+    const response = await fetch(CLOUD_URL);
+    if (!response.ok) {
+      throw new Error(`Cloud fetch failed with status: ${response.status}`);
+    }
+    const cloudBookings = await response.json();
+    if (Array.isArray(cloudBookings)) {
+      // Sync it locally as cache
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cloudBookings));
+      return cloudBookings;
+    }
+  } catch (error) {
+    console.error("Cloud fetch failed, falling back to local cache:", error);
+  }
+  // Fallback to local storage
+  return getBookings();
+};
+
+export const saveBookingsCloud = async (bookings: Booking[]) => {
+  try {
+    // Write locally first as cache
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
+    
+    // Write to cloud
+    await fetch(CLOUD_URL, {
+      method: "POST",
+      body: JSON.stringify(bookings),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+  } catch (error) {
+    console.error("Failed to sync bookings to cloud:", error);
+  }
+};
+
 export const saveBooking = (bookingData: Omit<Booking, "id" | "date" | "status" | "createdAt">) => {
   const bookings = getBookings();
   const newBooking: Booking = {
@@ -157,6 +196,10 @@ export const saveBooking = (bookingData: Omit<Booking, "id" | "date" | "status" 
   
   const updatedBookings = [newBooking, ...bookings];
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedBookings));
+  
+  // Background cloud sync
+  saveBookingsCloud(updatedBookings).catch(console.error);
+  
   return newBooking;
 };
 
@@ -166,5 +209,9 @@ export const updateBooking = (id: string, updates: Partial<Booking>) => {
     b.id === id ? { ...b, ...updates } : b
   );
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedBookings));
+  
+  // Background cloud sync
+  saveBookingsCloud(updatedBookings).catch(console.error);
+  
   return updatedBookings.find(b => b.id === id);
 };

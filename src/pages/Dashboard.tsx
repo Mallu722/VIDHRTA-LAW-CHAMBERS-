@@ -46,7 +46,7 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { getBookings, updateBooking, Booking, CaseMedia, CaseReview, ASSOCIATES, CaseHistoryItem } from "@/lib/storage";
+import { getBookings, updateBooking, Booking, CaseMedia, CaseReview, ASSOCIATES, CaseHistoryItem, getBookingsCloud, saveBookingsCloud } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
@@ -200,6 +200,9 @@ const Dashboard = () => {
     localStorage.setItem("vidhrta_bookings", JSON.stringify(updated));
     setBookings(updated);
 
+    // Sync to cloud database
+    saveBookingsCloud(updated).catch(console.error);
+
     // Reset fields
     setNewClient("");
     setNewPhone("");
@@ -221,7 +224,15 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
+      // Load local cache immediately for instant response
       setBookings(getBookings());
+
+      // Fetch cloud data and sync background
+      getBookingsCloud().then((cloudData) => {
+        if (cloudData) {
+          setBookings(cloudData);
+        }
+      }).catch(console.error);
     }
   }, [isAuthenticated]);
 
