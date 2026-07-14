@@ -23,7 +23,10 @@ import {
   FileText,
   Upload,
   Link as LinkIcon,
-  LogOut
+  LogOut,
+  Gavel,
+  MapPin,
+  ClipboardList
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,7 +46,7 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { getBookings, updateBooking, Booking, CaseMedia, CaseReview } from "@/lib/storage";
+import { getBookings, updateBooking, Booking, CaseMedia, CaseReview, ASSOCIATES, CaseHistoryItem } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
@@ -62,6 +65,67 @@ const Dashboard = () => {
   });
   const [loginPassword, setLoginPassword] = useState("");
   const [loginError, setLoginError] = useState(false);
+
+  // e-Court tracking state
+  const [newAction, setNewAction] = useState("");
+  const [newDescription, setNewDescription] = useState("");
+  const [newUpdatedBy, setNewUpdatedBy] = useState("");
+  const [newHistoryDate, setNewHistoryDate] = useState(() => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  });
+
+  const getCaseStateColor = (state?: string) => {
+    switch (state) {
+      case "Filing/Drafting": return "text-slate-600 bg-slate-50 border-slate-200";
+      case "Admission": return "text-blue-600 bg-blue-50 border-blue-200";
+      case "Interim Relief": return "text-amber-600 bg-amber-50 border-amber-200";
+      case "Evidence": return "text-indigo-600 bg-indigo-50 border-indigo-200";
+      case "Arguments": return "text-purple-600 bg-purple-50 border-purple-200";
+      case "Judgment Pending": return "text-rose-600 bg-rose-50 border-rose-200";
+      case "Disposed": return "text-emerald-600 bg-emerald-50 border-emerald-200";
+      default: return "text-slate-500 bg-slate-50 border-slate-200";
+    }
+  };
+
+  const handleAddHistoryItem = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedBooking || !newAction || !newDescription) {
+      toast({
+        variant: "destructive",
+        title: "Missing Fields",
+        description: "Please enter an action and description for the update.",
+      });
+      return;
+    }
+
+    const newItem: CaseHistoryItem = {
+      id: Math.random().toString(36).substr(2, 9),
+      date: new Date(newHistoryDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+      action: newAction,
+      description: newDescription,
+      updatedBy: newUpdatedBy || "Admin"
+    };
+
+    const updatedHistory = [newItem, ...(selectedBooking.history || [])];
+    setSelectedBooking({
+      ...selectedBooking,
+      history: updatedHistory
+    });
+
+    // Reset fields
+    setNewAction("");
+    setNewDescription("");
+    setNewUpdatedBy("");
+    
+    toast({
+      title: "Update Staged",
+      description: "Case status update has been added. Click 'Save Changes' to commit.",
+    });
+  };
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -342,9 +406,9 @@ const Dashboard = () => {
                       <table className="w-full text-sm text-left">
                         <thead>
                           <tr className="border-b border-slate-100">
-                            <th className="pb-4 font-semibold text-slate-900">Client</th>
-                            <th className="pb-4 font-semibold text-slate-900">Subject</th>
-                            <th className="pb-4 font-semibold text-slate-900">Date/Status</th>
+                            <th className="pb-4 font-semibold text-slate-900">Client & Case</th>
+                            <th className="pb-4 font-semibold text-slate-900">Assigned Advocate / Court</th>
+                            <th className="pb-4 font-semibold text-slate-900">Case Stage</th>
                             <th className="pb-4 font-semibold text-slate-900 text-right">Actions</th>
                           </tr>
                         </thead>
@@ -352,13 +416,34 @@ const Dashboard = () => {
                           {filteredBookings.map((booking) => (
                             <tr key={booking.id} className="group hover:bg-slate-50 transition-colors cursor-pointer" onClick={() => { setSelectedBooking({ ...booking }); setIsModalOpen(true); }}>
                               <td className="py-4">
-                                <div className="font-medium text-slate-900">{booking.client}</div>
+                                <div className="font-medium text-slate-900 flex items-center gap-2">
+                                  {booking.client}
+                                  {booking.caseNumber && (
+                                    <span className="text-[10px] font-mono bg-slate-100 border border-slate-200 text-slate-700 px-1.5 py-0.5 rounded font-bold uppercase">
+                                      {booking.caseNumber}
+                                    </span>
+                                  )}
+                                </div>
                                 <div className="text-xs text-muted-foreground">{booking.email}</div>
                               </td>
-                              <td className="py-4 text-slate-600 max-w-[150px] truncate">{booking.subject || "No Subject"}</td>
                               <td className="py-4">
-                                <div className="text-slate-600 mb-1">{booking.date}</div>
-                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium border ${getStatusColor(booking.status)}`}>
+                                <div className="font-semibold text-slate-900 flex items-center gap-1.5">
+                                  <Users className="w-3.5 h-3.5 text-gold/70" />
+                                  {booking.assignedAssociate ? (
+                                    <span className="text-slate-800">{booking.assignedAssociate}</span>
+                                  ) : (
+                                    <span className="text-slate-400 italic font-normal">Unassigned</span>
+                                  )}
+                                </div>
+                                <div className="text-xs text-muted-foreground max-w-[200px] truncate">{booking.courtName || "No Court Forum Set"}</div>
+                              </td>
+                              <td className="py-4">
+                                <div className="mb-1">
+                                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border ${getCaseStateColor(booking.caseState)}`}>
+                                    {booking.caseState || "Filing/Drafting"}
+                                  </span>
+                                </div>
+                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-medium border ${getStatusColor(booking.status)}`}>
                                   {booking.status}
                                 </span>
                               </td>
@@ -459,6 +544,7 @@ const Dashboard = () => {
                 <div className="px-8 border-b border-slate-100">
                   <TabsList className="bg-transparent gap-8 h-14 p-0">
                     <TabsTrigger value="overview" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-gold rounded-none h-full px-0 font-bold uppercase text-[10px] tracking-widest">Overview</TabsTrigger>
+                    <TabsTrigger value="tracker" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-gold rounded-none h-full px-0 font-bold uppercase text-[10px] tracking-widest">Case Tracker</TabsTrigger>
                     <TabsTrigger value="media" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-gold rounded-none h-full px-0 font-bold uppercase text-[10px] tracking-widest">Case Media</TabsTrigger>
                     <TabsTrigger value="reviews" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-gold rounded-none h-full px-0 font-bold uppercase text-[10px] tracking-widest">Reviews & Notes</TabsTrigger>
                   </TabsList>
@@ -509,6 +595,174 @@ const Dashboard = () => {
                             className="bg-slate-50 border-slate-200 resize-none h-[220px]"
                           />
                         </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="tracker" className="mt-0 space-y-8 animate-fade-in">
+                    {/* Case Registry Details Card */}
+                    <div className="bg-slate-50/70 p-6 rounded-xl border border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-6 shadow-sm">
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">Case Number / Citation</label>
+                          <div className="relative">
+                            <Gavel className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <Input 
+                              placeholder="e.g. WP 8492/2026 or OS 123/2026"
+                              value={selectedBooking.caseNumber || ""}
+                              onChange={(e) => setSelectedBooking({...selectedBooking, caseNumber: e.target.value})}
+                              className="bg-white border-slate-200 pl-10 h-10"
+                            />
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">Court Forum</label>
+                          <div className="relative">
+                            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <Input 
+                              placeholder="e.g. High Court of Karnataka, Bengaluru"
+                              value={selectedBooking.courtName || ""}
+                              onChange={(e) => setSelectedBooking({...selectedBooking, courtName: e.target.value})}
+                              className="bg-white border-slate-200 pl-10 h-10"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">Assigned Associate</label>
+                          <select 
+                            className="w-full h-10 px-3 bg-white border border-slate-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-gold"
+                            value={selectedBooking.assignedAssociate || ""}
+                            onChange={(e) => setSelectedBooking({...selectedBooking, assignedAssociate: e.target.value})}
+                          >
+                            <option value="">Select Associate...</option>
+                            {ASSOCIATES.map((a) => (
+                              <option key={a.name} value={a.name}>{a.name}</option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">Current Case Stage (e-Court States)</label>
+                          <select 
+                            className="w-full h-10 px-3 bg-white border border-slate-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-gold"
+                            value={selectedBooking.caseState || "Filing/Drafting"}
+                            onChange={(e) => setSelectedBooking({...selectedBooking, caseState: e.target.value})}
+                          >
+                            <option value="Filing/Drafting">Filing / Drafting</option>
+                            <option value="Admission">Admission / Registration</option>
+                            <option value="Interim Relief">Interim Relief / Stay Order</option>
+                            <option value="Evidence">Evidence / Trial Stage</option>
+                            <option value="Arguments">Final Arguments</option>
+                            <option value="Judgment Pending">Judgment / Order Reserved</option>
+                            <option value="Disposed">Disposed / Decided</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Timeline & Add Proceeding Section */}
+                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 border-t border-slate-100 pt-6">
+                      {/* Left: Add Proceeding Form */}
+                      <div className="lg:col-span-2 space-y-4 pr-0 lg:pr-6 lg:border-r lg:border-slate-100">
+                        <div>
+                          <h3 className="font-bold text-base mb-1 text-slate-900">Add Case Progress Event</h3>
+                          <p className="text-xs text-muted-foreground mb-4">Record court hearings, orders, filings, or other track updates.</p>
+                        </div>
+                        
+                        <form onSubmit={handleAddHistoryItem} className="space-y-4">
+                          <div>
+                            <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block">Proceeding Date</label>
+                            <Input 
+                              type="date"
+                              value={newHistoryDate}
+                              onChange={(e) => setNewHistoryDate(e.target.value)}
+                              className="bg-white border-slate-200"
+                            />
+                          </div>
+                          
+                          <div>
+                            <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block">Action / Event Name</label>
+                            <Input 
+                              placeholder="e.g. Interim Stay Extended, WS Filed"
+                              value={newAction}
+                              onChange={(e) => setNewAction(e.target.value)}
+                              className="bg-white border-slate-200"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block">Proceeding Details</label>
+                            <Textarea 
+                              placeholder="Describe what occurred in court or what was filed..."
+                              value={newDescription}
+                              onChange={(e) => setNewDescription(e.target.value)}
+                              className="bg-white border-slate-200 resize-none h-20 text-xs"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block">Updated By</label>
+                            <select 
+                              className="w-full h-9 px-3 bg-white border border-slate-200 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-gold"
+                              value={newUpdatedBy}
+                              onChange={(e) => setNewUpdatedBy(e.target.value)}
+                            >
+                              <option value="">Select Updater...</option>
+                              <option value="Senior Partner">Senior Partner</option>
+                              {ASSOCIATES.map((a) => (
+                                <option key={a.name} value={a.name}>{a.name}</option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <Button type="submit" variant="outline" className="w-full text-xs uppercase tracking-wider font-bold h-9 hover:bg-gold/10 hover:text-gold hover:border-gold">
+                            Stage Case Update
+                          </Button>
+                        </form>
+                      </div>
+
+                      {/* Right: Proceedings Timeline */}
+                      <div className="lg:col-span-3 space-y-4 pl-0 lg:pl-2">
+                        <div className="flex justify-between items-center">
+                          <h3 className="font-bold text-base text-slate-900">Case Proceedings Track Record</h3>
+                          <span className="text-[10px] bg-gold/10 text-gold px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                            {selectedBooking.history?.length || 0} Events
+                          </span>
+                        </div>
+
+                        {selectedBooking.history && selectedBooking.history.length > 0 ? (
+                          <div className="relative pl-6 border-l border-slate-200 space-y-6 py-2 max-h-[360px] overflow-y-auto pr-2">
+                            {selectedBooking.history.map((item) => (
+                              <div key={item.id} className="relative group">
+                                {/* Timeline Bullet */}
+                                <div className="absolute -left-[31px] top-1 bg-white border-2 border-gold rounded-full w-4 h-4 flex items-center justify-center transition-transform group-hover:scale-125">
+                                  <div className="bg-gold w-1.5 h-1.5 rounded-full" />
+                                </div>
+                                
+                                <div className="bg-slate-50 hover:bg-slate-100/70 p-4 rounded-lg border border-slate-100 transition-all shadow-sm">
+                                  <div className="flex flex-wrap justify-between items-start gap-2 mb-1.5">
+                                    <h4 className="font-bold text-sm text-slate-800">{item.action}</h4>
+                                    <span className="text-[10px] font-bold text-slate-400 whitespace-nowrap bg-white px-2 py-0.5 rounded border border-slate-100 shadow-sm">{item.date}</span>
+                                  </div>
+                                  <p className="text-xs text-slate-600 leading-relaxed mb-2">{item.description}</p>
+                                  <div className="text-[10px] text-slate-500 flex items-center gap-1 font-medium">
+                                    <Users className="w-3 h-3 text-gold/60" /> Updated by: <span className="text-slate-800 font-bold">{item.updatedBy}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="py-16 text-center bg-slate-50 rounded-lg border border-dashed border-slate-200">
+                            <ClipboardList className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+                            <p className="text-slate-500 text-sm">No track record registered yet.</p>
+                            <p className="text-slate-400 text-xs mt-1">Use the form on the left to add your first case update.</p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </TabsContent>

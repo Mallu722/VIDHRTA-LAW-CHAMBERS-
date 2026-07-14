@@ -1,5 +1,6 @@
 import ScrollReveal from "@/components/ScrollReveal";
 import SectionHeading from "@/components/SectionHeading";
+import { ASSOCIATES } from "@/lib/storage";
 
 const partners = [
   {
@@ -21,19 +22,6 @@ const partners = [
     focus: "Taxation, Commercial Litigation",
     bio: "Madan's expertise in taxation law and commercial disputes makes him an invaluable counsel for businesses and individuals alike. His methodical approach to litigation and deep understanding of fiscal legislation has earned the trust of a broad client base.",
   },
-];
-
-const associates = [
-  { name: "Chandrashekar H", focus: "Civil, Criminal, Service, Constitutional" },
-  { name: "Deepashree", focus: "Civil, Criminal, Service, Constitutional" },
-  { name: "Vasushrutha Sharma", focus: "Civil, Criminal, Service, Constitutional" },
-  { name: "Sahana Sangreshi", focus: "Civil, Criminal, Service, Constitutional" },
-  { name: "Shrinidhi K S", focus: "Civil, Criminal, Service, Constitutional, Matrimonial" },
-  { name: "Chandra Gowda", focus: "Civil, Criminal, Service, Constitutional" },
-  { name: "Drupad Gowda", focus: "Civil, Criminal, Service, Constitutional" },
-  { name: "Pradnya Shenoy", focus: "Civil, Criminal, Service, Constitutional" },
-  { name: "Ayush Thimmiah", focus: "Civil, Criminal, Service, Constitutional" },
-  { name: "Mahadev S", focus: "Civil, Criminal, Service, Constitutional" },
 ];
 
 const Team = () => {
@@ -73,8 +61,8 @@ const Team = () => {
                         </div>
                     )}
                     <div>
-                      <h3 className="text-primary-foreground font-heading text-xl font-semibold">{p.name}</h3>
-                      <span className="text-gold text-xs tracking-widest uppercase">{p.role}</span>
+                       <h3 className="text-primary-foreground font-heading text-xl font-semibold">{p.name}</h3>
+                       <span className="text-gold text-xs tracking-widest uppercase">{p.role}</span>
                     </div>
                   </div>
                   
@@ -97,7 +85,7 @@ const Team = () => {
             <SectionHeading eyebrow="Associates" title="Our Advocates" />
           </ScrollReveal>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {associates.map((a, i) => (
+            {ASSOCIATES.map((a, i) => (
               <ScrollReveal key={a.name} delay={i * 60}>
                 <div className="bg-card rounded border border-border p-6 text-center hover:border-gold/40 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
                   <div className="w-14 h-14 rounded-full bg-primary mx-auto mb-4 flex items-center justify-center">
