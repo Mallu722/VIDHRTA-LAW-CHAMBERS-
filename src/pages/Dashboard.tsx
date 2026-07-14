@@ -127,6 +127,98 @@ const Dashboard = () => {
     });
   };
 
+  // New Case Modal states
+  const [isNewCaseOpen, setIsNewCaseOpen] = useState(false);
+  const [newClient, setNewClient] = useState("");
+  const [newPhone, setNewPhone] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newSubject, setNewSubject] = useState("");
+  const [newCaseDescription, setNewCaseDescription] = useState("");
+  const [newCaseNumber, setNewCaseNumber] = useState("");
+  const [newCourtName, setNewCourtName] = useState("");
+  const [newAssignedAssociate, setNewAssignedAssociate] = useState("");
+  const [newCaseState, setNewCaseState] = useState("Filing/Drafting");
+  const [newStatus, setNewStatus] = useState<"Pending" | "Confirmed" | "Completed" | "Cancelled">("Confirmed");
+
+  const handleCreateCase = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newClient || !newEmail || !newSubject) {
+      toast({
+        variant: "destructive",
+        title: "Missing Required Fields",
+        description: "Please fill in Client Name, Email, and Subject.",
+      });
+      return;
+    }
+
+    const newBooking: Booking = {
+      id: Math.random().toString(36).substr(2, 9),
+      client: newClient,
+      phone: newPhone,
+      email: newEmail,
+      subject: newSubject,
+      message: newCaseDescription,
+      date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+      status: newStatus,
+      createdAt: new Date().toISOString(),
+      caseDescription: newCaseDescription,
+      assignedAssociate: newAssignedAssociate,
+      courtName: newCourtName,
+      caseState: newCaseState,
+      caseNumber: newCaseNumber,
+      media: [],
+      reviews: [
+        {
+          id: "r1",
+          author: "System",
+          rating: 5,
+          comment: "Consultation case created by administrator.",
+          date: new Date().toLocaleDateString()
+        }
+      ],
+      history: [
+        {
+          id: "h1",
+          date: new Date().toLocaleDateString(),
+          action: "Case Initialized",
+          description: `Case folder created. Assigned to ${newAssignedAssociate || "Unassigned"}. Stage: ${newCaseState}.`,
+          updatedBy: "Admin"
+        }
+      ]
+    };
+
+    const stored = localStorage.getItem("vidhrta_bookings");
+    let bookingsList: Booking[] = [];
+    if (stored) {
+      try {
+        bookingsList = JSON.parse(stored);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    const updated = [newBooking, ...bookingsList];
+    localStorage.setItem("vidhrta_bookings", JSON.stringify(updated));
+    setBookings(updated);
+
+    // Reset fields
+    setNewClient("");
+    setNewPhone("");
+    setNewEmail("");
+    setNewSubject("");
+    setNewCaseDescription("");
+    setNewCaseNumber("");
+    setNewCourtName("");
+    setNewAssignedAssociate("");
+    setNewCaseState("Filing/Drafting");
+    setNewStatus("Confirmed");
+    setIsNewCaseOpen(false);
+
+    toast({
+      title: "Case Created",
+      description: "A new consultation and case record has been added successfully.",
+    });
+  };
+
   useEffect(() => {
     if (isAuthenticated) {
       setBookings(getBookings());
@@ -340,13 +432,13 @@ const Dashboard = () => {
                 </p>
               </div>
               <div className="flex gap-4">
-                <Button variant="outline" className="border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10" onClick={handleLogout}>
+                <Button variant="ghost" className="border border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground bg-transparent" onClick={handleLogout}>
                   <LogOut className="w-4 h-4 mr-2" /> Logout
                 </Button>
-                <Button variant="outline" className="border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10">
+                <Button variant="ghost" className="border border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground bg-transparent">
                   <Download className="w-4 h-4 mr-2" /> Export Report
                 </Button>
-                <Button variant="gold">
+                <Button variant="gold" onClick={() => setIsNewCaseOpen(true)}>
                   <Plus className="w-4 h-4 mr-2" /> New Case
                 </Button>
               </div>
@@ -376,138 +468,102 @@ const Dashboard = () => {
             ))}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="space-y-6">
             {/* Bookings Table */}
-            <div className="lg:col-span-2 space-y-6">
-              <ScrollReveal>
-                <Card className="border-none shadow-sm">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-7">
-                    <div>
-                      <CardTitle className="text-xl font-bold">Recent Bookings</CardTitle>
-                      <CardDescription>Manage your incoming booking inquiries</CardDescription>
+            <ScrollReveal>
+              <Card className="border-none shadow-sm">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-7">
+                  <div>
+                    <CardTitle className="text-xl font-bold">Case Registry</CardTitle>
+                    <CardDescription>Manage your consultations, client cases, and e-Court states</CardDescription>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input 
+                        placeholder="Search queries..." 
+                        className="pl-9 h-9 w-[200px] bg-slate-50 border-none"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                        <Input 
-                          placeholder="Search queries..." 
-                          className="pl-9 h-9 w-[200px] bg-slate-50 border-none"
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                      </div>
-                      <Button variant="ghost" size="icon" className="h-9 w-9">
-                        <Filter className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm text-left">
-                        <thead>
-                          <tr className="border-b border-slate-100">
-                            <th className="pb-4 font-semibold text-slate-900">Client & Case</th>
-                            <th className="pb-4 font-semibold text-slate-900">Assigned Advocate / Court</th>
-                            <th className="pb-4 font-semibold text-slate-900">Case Stage</th>
-                            <th className="pb-4 font-semibold text-slate-900 text-right">Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-50">
-                          {filteredBookings.map((booking) => (
-                            <tr key={booking.id} className="group hover:bg-slate-50 transition-colors cursor-pointer" onClick={() => { setSelectedBooking({ ...booking }); setIsModalOpen(true); }}>
-                              <td className="py-4">
-                                <div className="font-medium text-slate-900 flex items-center gap-2">
-                                  {booking.client}
-                                  {booking.caseNumber && (
-                                    <span className="text-[10px] font-mono bg-slate-100 border border-slate-200 text-slate-700 px-1.5 py-0.5 rounded font-bold uppercase">
-                                      {booking.caseNumber}
-                                    </span>
-                                  )}
-                                </div>
-                                <div className="text-xs text-muted-foreground">{booking.email}</div>
-                              </td>
-                              <td className="py-4">
-                                <div className="font-semibold text-slate-900 flex items-center gap-1.5">
-                                  <Users className="w-3.5 h-3.5 text-gold/70" />
-                                  {booking.assignedAssociate ? (
-                                    <span className="text-slate-800">{booking.assignedAssociate}</span>
-                                  ) : (
-                                    <span className="text-slate-400 italic font-normal">Unassigned</span>
-                                  )}
-                                </div>
-                                <div className="text-xs text-muted-foreground max-w-[200px] truncate">{booking.courtName || "No Court Forum Set"}</div>
-                              </td>
-                              <td className="py-4">
-                                <div className="mb-1">
-                                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border ${getCaseStateColor(booking.caseState)}`}>
-                                    {booking.caseState || "Filing/Drafting"}
+                    <Button variant="ghost" size="icon" className="h-9 w-9">
+                      <Filter className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm text-left">
+                      <thead>
+                        <tr className="border-b border-slate-100">
+                          <th className="pb-4 font-semibold text-slate-900">Client & Case</th>
+                          <th className="pb-4 font-semibold text-slate-900">Assigned Advocate / Court</th>
+                          <th className="pb-4 font-semibold text-slate-900">Case Stage</th>
+                          <th className="pb-4 font-semibold text-slate-900 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-50">
+                        {filteredBookings.map((booking) => (
+                          <tr key={booking.id} className="group hover:bg-slate-50 transition-colors cursor-pointer" onClick={() => { setSelectedBooking({ ...booking }); setIsModalOpen(true); }}>
+                            <td className="py-4">
+                              <div className="font-medium text-slate-900 flex items-center gap-2">
+                                {booking.client}
+                                {booking.caseNumber && (
+                                  <span className="text-[10px] font-mono bg-slate-100 border border-slate-200 text-slate-700 px-1.5 py-0.5 rounded font-bold uppercase">
+                                    {booking.caseNumber}
                                   </span>
-                                </div>
-                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-medium border ${getStatusColor(booking.status)}`}>
-                                  {booking.status}
+                                )}
+                              </div>
+                              <div className="text-xs text-muted-foreground">{booking.email}</div>
+                            </td>
+                            <td className="py-4">
+                              <div className="font-semibold text-slate-900 flex items-center gap-1.5">
+                                <Users className="w-3.5 h-3.5 text-gold/70" />
+                                {booking.assignedAssociate ? (
+                                  <span className="text-slate-800">{booking.assignedAssociate}</span>
+                                ) : (
+                                  <span className="text-slate-400 italic font-normal">Unassigned</span>
+                                )}
+                              </div>
+                              <div className="text-xs text-muted-foreground max-w-[200px] truncate">{booking.courtName || "No Court Forum Set"}</div>
+                            </td>
+                            <td className="py-4">
+                              <div className="mb-1">
+                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border ${getCaseStateColor(booking.caseState)}`}>
+                                  {booking.caseState || "Filing/Drafting"}
                                 </span>
-                              </td>
-                              <td className="py-4 text-right">
-                                <Button variant="ghost" size="sm" className="h-8 px-2 text-gold hover:text-gold hover:bg-gold/10">
-                                  Manage Hub <ExternalLink className="w-3 h-3 ml-1.5" />
-                                </Button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                    {filteredBookings.length === 0 && (
-                      <div className="py-20 text-center space-y-4">
-                        <div className="mx-auto w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center">
-                          <Inbox className="w-6 h-6 text-slate-400" />
-                        </div>
-                        <div className="space-y-1">
-                          <p className="text-slate-900 font-medium">No bookings yet</p>
-                          <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-                            New legal inquiries and appointments will appear here once they are received through the booking form.
-                          </p>
-                        </div>
+                              </div>
+                              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-medium border ${getStatusColor(booking.status)}`}>
+                                {booking.status}
+                              </span>
+                            </td>
+                            <td className="py-4 text-right">
+                              <Button variant="ghost" size="sm" className="h-8 px-2 text-gold hover:text-gold hover:bg-gold/10">
+                                Manage Hub <ExternalLink className="w-3 h-3 ml-1.5" />
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  {filteredBookings.length === 0 && (
+                    <div className="py-20 text-center space-y-4">
+                      <div className="mx-auto w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center">
+                        <Inbox className="w-6 h-6 text-slate-400" />
                       </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </ScrollReveal>
-            </div>
-
-            {/* Upcoming Schedule */}
-            <div className="space-y-6">
-              <ScrollReveal direction="right">
-                <Card className="border-none shadow-sm">
-                  <CardHeader>
-                    <CardTitle className="text-xl font-bold flex items-center gap-2">
-                      <Calendar className="w-5 h-5 text-gold" /> Upcoming Schedule
-                    </CardTitle>
-                    <CardDescription>Your appointments for the next 48 hours</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="py-8 text-center bg-slate-50/50 rounded-lg border border-dashed border-slate-200">
-                      <p className="text-sm text-muted-foreground leading-relaxed px-6">
-                        No scheduled appointments found for the next 48 hours.
-                      </p>
+                      <div className="space-y-1">
+                        <p className="text-slate-900 font-medium">No bookings yet</p>
+                        <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+                          New legal inquiries and appointments will appear here once they are received through the booking form.
+                        </p>
+                      </div>
                     </div>
-                    <Button variant="outline" className="w-full mt-4">View Full Calendar</Button>
-                  </CardContent>
-                </Card>
-              </ScrollReveal>
-
-              <ScrollReveal direction="right" delay={100}>
-                <Card className="bg-primary border-none shadow-sm text-primary-foreground text-center py-8">
-                  <CardContent className="space-y-4">
-                    <BarChart3 className="w-8 h-8 text-gold mx-auto mb-2 opacity-50" />
-                    <h3 className="font-bold">Case Analytics</h3>
-                    <p className="text-xs text-primary-foreground/60 px-4">
-                      Analytics will be available once case data starts accumulating in the system.
-                    </p>
-                  </CardContent>
-                </Card>
-              </ScrollReveal>
-            </div>
+                  )}
+                </CardContent>
+              </Card>
+            </ScrollReveal>
           </div>
         </div>
       </section>
@@ -923,6 +979,158 @@ const Dashboard = () => {
               </Tabs>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* New Case / Consultation Modal */}
+      <Dialog open={isNewCaseOpen} onOpenChange={setIsNewCaseOpen}>
+        <DialogContent className="max-w-2xl bg-white p-8">
+          <DialogHeader className="mb-4">
+            <DialogTitle className="text-2xl font-heading text-slate-900">Add New Case / Consultation</DialogTitle>
+            <DialogDescription className="text-slate-500">
+              Initialize a new legal client consultation and case tracking record.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleCreateCase} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Left Column */}
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 block">Client Name *</label>
+                  <Input 
+                    required
+                    placeholder="Enter client's full name"
+                    value={newClient}
+                    onChange={(e) => setNewClient(e.target.value)}
+                    className="bg-slate-50 border-slate-200"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 block">Phone</label>
+                    <Input 
+                      placeholder="Phone number"
+                      value={newPhone}
+                      onChange={(e) => setNewPhone(e.target.value)}
+                      className="bg-slate-50 border-slate-200"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 block">Email *</label>
+                    <Input 
+                      required
+                      type="email"
+                      placeholder="Email address"
+                      value={newEmail}
+                      onChange={(e) => setNewEmail(e.target.value)}
+                      className="bg-slate-50 border-slate-200"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 block">Case Subject / Title *</label>
+                  <Input 
+                    required
+                    placeholder="e.g. Property Title Dispute, Bail Application"
+                    value={newSubject}
+                    onChange={(e) => setNewSubject(e.target.value)}
+                    className="bg-slate-50 border-slate-200"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 block">Brief Case Details</label>
+                  <Textarea 
+                    placeholder="Enter brief description of the legal dispute or consultation notes..."
+                    value={newCaseDescription}
+                    onChange={(e) => setNewCaseDescription(e.target.value)}
+                    className="bg-slate-50 border-slate-200 resize-none h-[120px]"
+                  />
+                </div>
+              </div>
+
+              {/* Right Column */}
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 block">Case Number / Citation</label>
+                  <Input 
+                    placeholder="e.g. WP 8492/2026"
+                    value={newCaseNumber}
+                    onChange={(e) => setNewCaseNumber(e.target.value)}
+                    className="bg-slate-50 border-slate-200"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 block">Court Forum</label>
+                  <Input 
+                    placeholder="e.g. High Court of Karnataka"
+                    value={newCourtName}
+                    onChange={(e) => setNewCourtName(e.target.value)}
+                    className="bg-slate-50 border-slate-200"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 block">Assigned Associate</label>
+                  <select 
+                    className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-gold"
+                    value={newAssignedAssociate}
+                    onChange={(e) => setNewAssignedAssociate(e.target.value)}
+                  >
+                    <option value="">Select Associate...</option>
+                    {ASSOCIATES.map((a) => (
+                      <option key={a.name} value={a.name}>{a.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 block">Case Stage</label>
+                    <select 
+                      className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-gold"
+                      value={newCaseState}
+                      onChange={(e) => setNewCaseState(e.target.value)}
+                    >
+                      <option value="Filing/Drafting">Filing / Drafting</option>
+                      <option value="Admission">Admission</option>
+                      <option value="Interim Relief">Interim Relief</option>
+                      <option value="Evidence">Evidence / Trial</option>
+                      <option value="Arguments">Arguments</option>
+                      <option value="Judgment Pending">Judgment Pending</option>
+                      <option value="Disposed">Disposed</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 block">Inquiry Status</label>
+                    <select 
+                      className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-gold"
+                      value={newStatus}
+                      onChange={(e) => setNewStatus(e.target.value as any)}
+                    >
+                      <option value="Pending">Pending Review</option>
+                      <option value="Confirmed">Active Consultation</option>
+                      <option value="Completed">Case Closed</option>
+                      <option value="Cancelled">Inquiry Dropped</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 border-t border-slate-100 pt-4 mt-6">
+              <Button type="button" variant="outline" onClick={() => setIsNewCaseOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="gold">
+                Create Case File
+              </Button>
+            </div>
+          </form>
         </DialogContent>
       </Dialog>
     </div>
