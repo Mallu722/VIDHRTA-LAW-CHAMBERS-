@@ -24,14 +24,16 @@ const partners = [
 ];
 
 const associates = [
-  { name: "Yallalingeshwar", focus: "Civil Litigation" },
-  { name: "Chandrashekar H", focus: "Criminal Law" },
-  { name: "Vasushrutha Sharma", focus: "Constitutional & Family Law" },
-  { name: "Chandra", focus: "Corporate Law" },
-  { name: "Karthik", focus: "Taxation" },
-  { name: "Madeva", focus: "Civil Litigation" },
-  { name: "Deepashree", focus: "Family & Matrimonial Law" },
-  { name: "Drupad", focus: "Criminal & Commercial Law" },
+  { name: "Chandrashekar H", focus: "Civil, Criminal, Service, Constitutional" },
+  { name: "Deepashree", focus: "Civil, Criminal, Service, Constitutional" },
+  { name: "Vasushrutha Sharma", focus: "Civil, Criminal, Service, Constitutional" },
+  { name: "Sahana Sangreshi", focus: "Civil, Criminal, Service, Constitutional" },
+  { name: "Shrinidhi K S", focus: "Civil, Criminal, Service, Constitutional, Matrimonial" },
+  { name: "Chandra Gowda", focus: "Civil, Criminal, Service, Constitutional" },
+  { name: "Drupad Gowda", focus: "Civil, Criminal, Service, Constitutional" },
+  { name: "Pradnya Shenoy", focus: "Civil, Criminal, Service, Constitutional" },
+  { name: "Ayush Thimmiah", focus: "Civil, Criminal, Service, Constitutional" },
+  { name: "Mahadev S", focus: "Civil, Criminal, Service, Constitutional" },
 ];
 
 const Team = () => {
