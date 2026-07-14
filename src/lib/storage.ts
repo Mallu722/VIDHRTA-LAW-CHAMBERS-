@@ -68,60 +68,7 @@ const STORAGE_KEY = "vidhrta_bookings";
 
 export const getBookings = (): Booking[] => {
   const stored = localStorage.getItem(STORAGE_KEY);
-  if (!stored) {
-    const mockBookings: Booking[] = [
-      {
-        id: "mock1",
-        client: "Vilas Rao",
-        phone: "+91 9876543210",
-        email: "vilas.rao@gmail.com",
-        subject: "Property Title Dispute - Land Acquisition",
-        message: "Need urgent representation regarding land acquisition by NHAI in Nelamangala.",
-        date: "12 Jul 2026",
-        status: "Confirmed",
-        createdAt: new Date().toISOString(),
-        caseDescription: "NHAI has issued a notification for land acquisition. Client disputes the compensation package and compensation calculation under the new Act.",
-        assignedAssociate: "Chandrashekar H",
-        courtName: "High Court of Karnataka - Court Hall 8",
-        caseState: "Evidence",
-        caseNumber: "WP/8492/2026",
-        media: [
-          { id: "1", type: "photo", url: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&q=80&w=800", title: "Evidence Photo 1" }
-        ],
-        reviews: [
-          { id: "1", author: "Internal Review", rating: 4, comment: "Case looks promising. Need to verify the witness statements.", date: "12 Jul 2026" }
-        ],
-        history: [
-          { id: "h1", date: "12 Jul 2026", action: "Case Filed", description: "Writ petition filed seeking stay on dispossession.", updatedBy: "Chandrashekar H" },
-          { id: "h2", date: "13 Jul 2026", action: "Admission Hearing", description: "Notice issued to NHAI. Interim stay granted on dispossession till next hearing.", updatedBy: "Chandrashekar H" }
-        ]
-      },
-      {
-        id: "mock2",
-        client: "Meera Deshpande",
-        phone: "+91 8765432109",
-        email: "meera.d@yahoo.com",
-        subject: "Constitutional Challenge - Service Dispute",
-        message: "Challenging wrongful termination from state department in violation of Article 311.",
-        date: "10 Jul 2026",
-        status: "Confirmed",
-        createdAt: new Date().toISOString(),
-        caseDescription: "Client was terminated without an inquiry. Challenging under Article 311 of the Constitution.",
-        assignedAssociate: "Vasushrutha Sharma",
-        courtName: "Karnataka State Administrative Tribunal (KSAT)",
-        caseState: "Admission",
-        caseNumber: "Application No. 129/2026",
-        media: [],
-        reviews: [],
-        history: [
-          { id: "h1", date: "10 Jul 2026", action: "Petition Drafted", description: "Completed petition drafting and compiled annexures.", updatedBy: "Vasushrutha Sharma" },
-          { id: "h2", date: "12 Jul 2026", action: "Filing Registered", description: "Filing registered successfully at KSAT registry.", updatedBy: "Vasushrutha Sharma" }
-        ]
-      }
-    ];
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(mockBookings));
-    return mockBookings;
-  }
+  if (!stored) return []; // No local cache — cloud fetch will populate
   try {
     return JSON.parse(stored);
   } catch (e) {
@@ -129,6 +76,7 @@ export const getBookings = (): Booking[] => {
     return [];
   }
 };
+
 
 const isLocalhost = typeof window !== "undefined" && 
   (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
