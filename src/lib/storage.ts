@@ -130,7 +130,7 @@ export const getBookings = (): Booking[] => {
   }
 };
 
-const CLOUD_URL = "https://kvdb.io/4NinsSNBKWC5w4qBCYTghs/bookings";
+const CLOUD_URL = "/api/bookings";
 
 export const getBookingsCloud = async (): Promise<Booking[]> => {
   try {
