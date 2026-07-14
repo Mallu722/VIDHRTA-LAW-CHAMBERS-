@@ -28,9 +28,27 @@ const Contact = () => {
     e.preventDefault();
     setLoading(true);
 
-    // Simulate API delay
-    setTimeout(() => {
-      saveBooking(formData);
+    // Save case to MongoDB
+    saveBooking(formData);
+
+    // Send email notification to huddarakshay@gmail.com
+    fetch("https://formsubmit.co/ajax/huddarakshay@gmail.com", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({
+        "Client Name": formData.client,
+        "Phone Number": formData.phone,
+        "Email Address": formData.email,
+        "Subject": formData.subject,
+        "Message": formData.message,
+        "_subject": `New Legal Inquiry from ${formData.client} - ${formData.subject}`,
+        "_template": "table"
+      })
+    })
+    .then(() => {
       setLoading(false);
       toast({
         title: "Booking Inquiry Sent",
@@ -44,7 +62,24 @@ const Contact = () => {
         message: ""
       });
       (e.target as HTMLFormElement).reset();
-    }, 1000);
+    })
+    .catch((err) => {
+      console.error("Email notification failed:", err);
+      // Still show success toast since the booking was successfully saved in MongoDB
+      setLoading(false);
+      toast({
+        title: "Booking Inquiry Sent",
+        description: "Thank you for reaching out. We have received your booking inquiry.",
+      });
+      setFormData({
+        client: "",
+        phone: "",
+        email: "",
+        subject: "",
+        message: ""
+      });
+      (e.target as HTMLFormElement).reset();
+    });
   };
 
   return (
