@@ -130,7 +130,16 @@ export const getBookings = (): Booking[] => {
   }
 };
 
-const CLOUD_URL = "/api/bookings";
+const isLocalhost = typeof window !== "undefined" && 
+  (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+
+const CLOUD_URL = isLocalhost 
+  ? "https://vidhrta-law-chambers.vercel.app/api/bookings" 
+  : "/api/bookings";
+
+const SETTINGS_URL = isLocalhost 
+  ? "https://vidhrta-law-chambers.vercel.app/api/settings" 
+  : "/api/settings";
 
 export const getBookingsCloud = async (): Promise<Booking[]> => {
   try {
@@ -244,7 +253,7 @@ export const saveAdminPassword = (password: string) => {
 
 export const getAdminPasswordCloud = async (): Promise<string> => {
   try {
-    const response = await fetch("/api/settings");
+    const response = await fetch(SETTINGS_URL);
     if (response.ok) {
       const data = await response.json();
       if (data.adminPassword) {
@@ -261,7 +270,7 @@ export const getAdminPasswordCloud = async (): Promise<string> => {
 export const saveAdminPasswordCloud = async (password: string): Promise<boolean> => {
   try {
     saveAdminPassword(password);
-    const response = await fetch("/api/settings", {
+    const response = await fetch(SETTINGS_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -281,7 +290,7 @@ export const deleteBookingCloud = async (id: string): Promise<boolean> => {
     const updated = bookings.filter((b) => b.id !== id);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
 
-    const response = await fetch(`/api/bookings?id=${id}`, {
+    const response = await fetch(`${CLOUD_URL}?id=${id}`, {
       method: "DELETE"
     });
     return response.ok;
